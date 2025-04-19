@@ -4,10 +4,7 @@ local parser_config = require("nvim-treesitter.parsers").get_parser_configs()
 
 parser_config.todofiles = {
   install_info = {
-    -- url = "~/github.com/mikosaurus/tree-sitter-todofiles",
-    -- url = "https://github.com/mikosaurus/tree-sitter-todofiles.git",
-    -- url = "git@github.com:mikosaurus/tree-sitter-todofiles.git",
-    url = "ssh://git@github.com/mikosaurus/tree-sitter-todofiles.git",
+    url = "~/github.com/mikosaurus/tree-sitter-todofiles",
     files = { "src/parser.c" },
     branch = "main",
     generate_requires_npm = false,
