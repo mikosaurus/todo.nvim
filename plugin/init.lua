@@ -1,11 +1,27 @@
--- print("hello from init in plugin folder")
 local ft = require'Comment.ft'
 
+print("hello from this place")
+local parser_config = require("nvim-treesitter.parsers").get_parser_configs()
+
+parser_config.todofiles = {
+  install_info = {
+    -- url = "~/github.com/mikosaurus/tree-sitter-todofiles",
+    url = "https://github.com/mikosaurus/tree-sitter-todofiles.git",
+    files = { "src/parser.c" },
+    branch = "main",
+    generate_requires_npm = false,
+    requires_generate_from_grammar = false,
+  },
+  filetype = "todo",
+}
+
+vim.treesitter.language.register("todofiles", "TODO")
+
 vim.filetype.add({
-    extension = {
-        todo = 'todofiles',
-        TODO = 'todofiles',
-    },
+  extension = {
+    todo = 'todofiles',
+    TODO = 'todofiles',
+  },
 })
 
 ft.set('todofiles', '#%s')
