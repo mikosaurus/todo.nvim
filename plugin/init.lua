@@ -1,6 +1,5 @@
 local ft = require'Comment.ft'
 
-print("hello from this place")
 local parser_config = require("nvim-treesitter.parsers").get_parser_configs()
 
 parser_config.todofiles = {
