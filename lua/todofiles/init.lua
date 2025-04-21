@@ -3,21 +3,25 @@ local M = {}
 M.builtin = {}
 
 -- Setup for todofiles treesitter related stuff
-local function setupTodofilesFiletype()
+local function setupTodofilesFiletype(opts)
   local ft = require'Comment.ft'
 
-  local parser_config = require("nvim-treesitter.parsers").get_parser_configs()
+  if opts.treesitter_path ~= nil then
+    local parser_config = require("nvim-treesitter.parsers").get_parser_configs()
 
-  parser_config.todofiles = {
-    install_info = {
-      url = "~/github.com/mikosaurus/tree-sitter-todofiles",
-      files = { "src/parser.c" },
-      branch = "main",
-      generate_requires_npm = false,
-      requires_generate_from_grammar = false,
-    },
-    filetype = "todo",
-  }
+    parser_config.todofiles = {
+      install_info = {
+        -- url = "~/github.com/mikosaurus/tree-sitter-todofiles",
+        url = opts.treesitter_path,
+        files = { "src/parser.c" },
+        branch = "main",
+        generate_requires_npm = false,
+        requires_generate_from_grammar = false,
+      },
+      filetype = "todo",
+    }
+  end
+
 
   vim.treesitter.language.register("todofiles", "TODO")
 
@@ -37,8 +41,11 @@ local function setupTodofilesFiletype()
   vim.cmd([[hi @cancelled guifg=#FF7081]])
 end
 
-M.setup = function()
-  setupTodofilesFiletype()
+M.setup = function(opts)
+  if opts == nil then
+    opts = {}
+  end
+  setupTodofilesFiletype(opts)
 end
 
 M.set_task_open = function()
