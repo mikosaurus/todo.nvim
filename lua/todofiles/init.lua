@@ -23,20 +23,8 @@ local function setupTodofilesFiletype(opts)
     -- Support both old (master) and new (main) nvim-treesitter API
     local parsers = require("nvim-treesitter.parsers")
 
-    -- New API (main branch): parsers module is a table, directly add to it
-    if type(parsers) == "table" and not parsers.get_parser_configs then
-      parsers.todofiles = {
-        install_info = {
-          url = expanded_path,
-          files = { "src/parser.c" },
-          branch = "main",
-          generate_requires_npm = false,
-          requires_generate_from_grammar = false,
-        },
-        tier = 3,
-      }
     -- Old API (master branch): use get_parser_configs()
-    elseif parsers.get_parser_configs then
+    if parsers.get_parser_configs then
       local parser_config = parsers.get_parser_configs()
       parser_config.todofiles = {
         install_info = {
@@ -48,6 +36,29 @@ local function setupTodofilesFiletype(opts)
         },
         filetype = "todo",
       }
+    -- New API (main branch): use vim.treesitter.language.add()
+    else
+      -- For the new API, we need to register the parser installation info differently
+      -- This uses the internal parser registry that :TSInstall uses
+      local ok, parser_info = pcall(require, "nvim-treesitter.parsers")
+      if ok and type(parser_info) == "table" then
+        -- Register parser info for :TSInstall command
+        parser_info.todofiles = {
+          install_info = {
+            url = expanded_path,
+            files = { "src/parser.c" },
+            branch = "main",
+            generate_requires_npm = false,
+            requires_generate_from_grammar = false,
+          },
+        }
+      end
+
+      -- Also try to load an already-installed parser
+      local parser_path = vim.fn.stdpath("data") .. "/lazy/nvim-treesitter/parser/todofiles.so"
+      if vim.fn.filereadable(parser_path) == 1 then
+        vim.treesitter.language.add("todofiles", { path = parser_path })
+      end
     end
   end
 
