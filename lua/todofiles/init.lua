@@ -4,11 +4,21 @@ M.builtin = {}
 
 -- Setup for todofiles treesitter related stuff
 local function setupTodofilesFiletype(opts)
-  local ft = require'Comment.ft'
+  local ft = require("Comment.ft")
 
   if opts.treesitter_path ~= nil then
     -- Expand path if it starts with ~
     local expanded_path = vim.fn.expand(opts.treesitter_path)
+
+    -- Normalize path for Windows compatibility
+    -- Convert forward slashes to backslashes on Windows for local paths
+    local is_windows = vim.fn.has("win32") == 1 or vim.fn.has("win64") == 1
+    local is_url = expanded_path:match("^https?://")
+
+    if is_windows and not is_url then
+      -- Only normalize local paths, not URLs
+      expanded_path = expanded_path:gsub("/", "\\")
+    end
 
     -- Support both old (master) and new (main) nvim-treesitter API
     local parsers = require("nvim-treesitter.parsers")
@@ -41,14 +51,13 @@ local function setupTodofilesFiletype(opts)
     end
   end
 
-
   vim.treesitter.language.register("todofiles", "todofiles")
   vim.treesitter.language.register("todofiles", "TODO")
 
   vim.filetype.add({
     extension = {
-      todo = 'todofiles',
-      TODO = 'todofiles',
+      todo = "todofiles",
+      TODO = "todofiles",
     },
   })
 
@@ -56,23 +65,37 @@ local function setupTodofilesFiletype(opts)
   vim.api.nvim_create_autocmd("FileType", {
     pattern = "todofiles",
     callback = function()
-      vim.treesitter.start()
+      -- Try to start treesitter, handle gracefully if parser is not installed
+      local ok, err = pcall(vim.treesitter.start)
+      if not ok then
+        -- Only show warning once per session
+        if not vim.g.todofiles_parser_warning_shown then
+          vim.g.todofiles_parser_warning_shown = true
+          vim.notify(
+            "Todofiles treesitter parser not installed.\n"
+              .. "Run :TSInstall todofiles to install it.\n"
+              .. "Note: On Windows, you need a C compiler (Visual Studio Build Tools or MinGW).",
+            vim.log.levels.WARN,
+            { title = "todofiles.nvim" }
+          )
+        end
+      end
     end,
   })
 
-  ft.set('todofiles', '#%s')
-  ft.set('todo', '#%s')
-  ft.set('TODO', '#%s')
+  ft.set("todofiles", "#%s")
+  ft.set("todo", "#%s")
+  ft.set("TODO", "#%s")
 
   -- Set up highlight groups for custom captures
-  vim.api.nvim_set_hl(0, '@task', { fg = 'white', default = true })
-  vim.api.nvim_set_hl(0, '@done', { fg = '#5CE65C', default = true })
-  vim.api.nvim_set_hl(0, '@cancelled', { fg = '#FF7081', default = true })
+  vim.api.nvim_set_hl(0, "@task", { fg = "white", default = true })
+  vim.api.nvim_set_hl(0, "@done", { fg = "#5CE65C", default = true })
+  vim.api.nvim_set_hl(0, "@cancelled", { fg = "#FF7081", default = true })
 
   -- Also set namespaced versions for nvim-treesitter main branch
-  vim.api.nvim_set_hl(0, '@task.todofiles', { link = '@task', default = true })
-  vim.api.nvim_set_hl(0, '@done.todofiles', { link = '@done', default = true })
-  vim.api.nvim_set_hl(0, '@cancelled.todofiles', { link = '@cancelled', default = true })
+  vim.api.nvim_set_hl(0, "@task.todofiles", { link = "@task", default = true })
+  vim.api.nvim_set_hl(0, "@done.todofiles", { link = "@done", default = true })
+  vim.api.nvim_set_hl(0, "@cancelled.todofiles", { link = "@cancelled", default = true })
 end
 
 M.setup = function(opts)
