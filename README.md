@@ -28,3 +28,21 @@ Installation
     end
 }
 ```
+
+
+## For windows machines that require the .dll file
+### Parser location on windows
+
+```
+C:\Users\username\scoop\apps\neovim\current\lib\nvim\parser\c.dll
+```
+
+Use this command to find the path to the installed parsers
+```vim
+:echo nvim_get_runtime_file('parser/*.dll', v:true) 
+```
+
+Same command but look for .so file on linux (Getting tools to build the .so file is much easier on linux. eg `pacman -Sy gcc` or something similar if os requires something else)
+```vim
+:echo nvim_get_runtime_file('parser/*.so', v:true) 
+```
