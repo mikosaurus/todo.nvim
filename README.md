@@ -31,6 +31,8 @@ Installation
 
 
 ## For windows machines that require the .dll file
+.dll file can be downloaded from here: https://github.com/mikosaurus/tree-sitter-todofiles/releases/
+
 ### Parser location on windows
 
 ```
