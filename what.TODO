@@ -1,0 +1,6 @@
+Improvements:
+    ☐ Continue work on adding @done(timestamp) or @cancelled(timestamp) when completing or cancelling a task
+        When doing alt+s  alt+d alt+c they also needs to be removed when running alt+n
+        Note that this will also need some more work on the tree-sitter grammar side
+    ☐ Add a "started" state
+        alt+s
