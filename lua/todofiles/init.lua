@@ -77,20 +77,32 @@ M.setup = function(opts)
   setupTodofilesFiletype(opts)
 end
 
+local function getTime()
+  return os.date("%y-%m-%d %H:%M")
+end
+
+local function stripExistingTags()
+  vim.cmd("s/ \\?@\\(open\\|done\\|cancelled\\)([^)]*)//ge")
+  vim.cmd("s/ \\+$//e")
+end
+
 M.set_task_open = function()
-  vim.cmd([[s/\([ \t]*\)\([☐|✔|☒|#|] \)\?\(.*\)/\1☐ \3]])
+  stripExistingTags()
+  vim.cmd("s/\\([ \\t]*\\)\\([☐|✔|☒|#|] \\)\\?\\(.*\\)/\\1☐ \\3")
 end
 
 M.set_task_done = function()
-  vim.cmd([[s/\([ \t]*\)\([☐|✔|☒|#|] \)\?\(.*\)/\1✔ \3]])
+  stripExistingTags()
+  vim.cmd("s/\\([ \\t]*\\)\\([☐|✔|☒|#|] \\)\\?\\(.*\\)/\\1✔ \\3 @done(" .. getTime() .. ")")
 end
 
 M.set_task_cancelled = function()
-  vim.cmd([[s/\([ \t]*\)\([☐|✔|☒|#|] \)\?\(.*\)/\1☒ \3]])
+  stripExistingTags()
+  vim.cmd("s/\\([ \\t]*\\)\\([☐|✔|☒|#|] \\)\\?\\(.*\\)/\\1☒ \\3 @cancelled(" .. getTime() .. ")")
 end
 
 M.clear_task = function()
-  vim.cmd([[s/\([ \t]*\)\([☐|✔|☒|#|] \)\?\(.*\)/\1\3]])
+  vim.cmd("s/\\([ \\t]*\\)\\([☐|✔|☒|#|] \\)\\?\\(.*\\)/\\1\\3")
 end
 
 return M
