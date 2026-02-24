@@ -9,6 +9,10 @@ local function setupTodofilesFiletype(opts)
   if opts.treesitter_path ~= nil then
     -- Expand path if it starts with ~
     local expanded_path = vim.fn.expand(opts.treesitter_path)
+    local branch = "main"
+    if opts.branch ~= nil then
+      branch = opts.branch
+    end
 
     vim.api.nvim_create_autocmd("User", {
       pattern = "TSUpdate",
@@ -17,7 +21,7 @@ local function setupTodofilesFiletype(opts)
           install_info = {
             url = expanded_path,
             files = { "src/parser.c" },
-            branch = "main",
+            branch = branch,
           },
         }
       end,
