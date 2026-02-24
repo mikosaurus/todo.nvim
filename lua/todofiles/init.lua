@@ -51,14 +51,23 @@ local function setupTodofilesFiletype(opts)
   ft.set("TODO", "#%s")
 
   -- Set up highlight groups for custom captures
-  vim.api.nvim_set_hl(0, "@task", { fg = "white", default = true })
-  vim.api.nvim_set_hl(0, "@done", { fg = "#5CE65C", default = true })
-  vim.api.nvim_set_hl(0, "@cancelled", { fg = "#FF7081", default = true })
+  local function set_highlights()
+    vim.api.nvim_set_hl(0, "@task", { fg = "white" })
+    vim.api.nvim_set_hl(0, "@done", { fg = "#5CE65C" })
+    vim.api.nvim_set_hl(0, "@cancelled", { fg = "#FF7081" })
+    vim.api.nvim_set_hl(0, "@tag.started", { fg = "#57B9FF" })
+    vim.api.nvim_set_hl(0, "@tag.done", { fg = "#5CE65C" })
+    vim.api.nvim_set_hl(0, "@tag.cancelled", { fg = "#FF7081" })
+    vim.api.nvim_set_hl(0, "@task.todofiles", { link = "@task" })
+    vim.api.nvim_set_hl(0, "@done.todofiles", { link = "@done" })
+    vim.api.nvim_set_hl(0, "@cancelled.todofiles", { link = "@cancelled" })
+    vim.api.nvim_set_hl(0, "@tag.started.todofiles", { link = "@tag.started" })
+    vim.api.nvim_set_hl(0, "@tag.done.todofiles", { link = "@tag.done" })
+    vim.api.nvim_set_hl(0, "@tag.cancelled.todofiles", { link = "@tag.cancelled" })
+  end
 
-  -- Also set namespaced versions for nvim-treesitter main branch
-  vim.api.nvim_set_hl(0, "@task.todofiles", { link = "@task", default = true })
-  vim.api.nvim_set_hl(0, "@done.todofiles", { link = "@done", default = true })
-  vim.api.nvim_set_hl(0, "@cancelled.todofiles", { link = "@cancelled", default = true })
+  set_highlights()
+  vim.api.nvim_create_autocmd("ColorScheme", { callback = set_highlights })
 end
 
 M.setup = function(opts)
