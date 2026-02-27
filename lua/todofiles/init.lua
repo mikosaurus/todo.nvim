@@ -82,7 +82,7 @@ local function getTime()
 end
 
 local function stripExistingTags()
-  vim.cmd("s/ \\?@\\(open\\|done\\|cancelled\\)([^)]*)//ge")
+  vim.cmd("s/ \\?@\\(started\\|done\\|cancelled\\)([^)]*)//ge")
   vim.cmd("s/ \\+$//e")
 end
 
