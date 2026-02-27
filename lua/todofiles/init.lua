@@ -109,3 +109,5 @@ end
 M.clear_task = function()
   vim.cmd("s/\\([ \\t]*\\)\\([☐|✔|☒|#|] \\)\\?\\(.*\\)/\\1\\3")
 end
+
+return M
