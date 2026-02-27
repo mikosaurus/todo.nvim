@@ -101,8 +101,11 @@ M.set_task_cancelled = function()
   vim.cmd("s/\\([ \\t]*\\)\\([☐|✔|☒|#|] \\)\\?\\(.*\\)/\\1☒ \\3 @cancelled(" .. getTime() .. ")")
 end
 
+M.set_task_started = function()
+  stripExistingTags()
+  vim.cmd("s/\\([ \\t]*\\)\\([☐|✔|☒|#|] \\)\\?\\(.*\\)/\\1☐ \\3 @started(" .. getTime() .. ")")
+end
+
 M.clear_task = function()
   vim.cmd("s/\\([ \\t]*\\)\\([☐|✔|☒|#|] \\)\\?\\(.*\\)/\\1\\3")
 end
-
-return M
